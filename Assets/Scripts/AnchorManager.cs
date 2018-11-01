@@ -14,14 +14,8 @@ public class AnchorManager : Photon.PunBehaviour
     public TextMesh log;
     public GameObject SetAnchorBtn;
     public GameObject ShareAnchorBtn;
-    public GameObject AnchorSharingUI;
     public GameObject AnchorGizmo;
     bool movingAnchor = false;
-
-    private void Start()
-    {
-        AnchorSharingUI.SetActive(false);
-    }
 
 
     // Update is called once per frame
@@ -35,8 +29,6 @@ public class AnchorManager : Photon.PunBehaviour
         }
 
         if (store == null) return;
-
-        AnchorSharingUI.SetActive(true);
 
         if (!anchorLoaded)
         {
@@ -59,9 +51,15 @@ public class AnchorManager : Photon.PunBehaviour
             ShareAnchorBtn.SetActive(true);
 
             if (movingAnchor)
-                AnchorSharingUI.SetActive(false);
+            {
+                SetAnchorBtn.SetActive(false);
+                ShareAnchorBtn.SetActive(false);
+            }
             else
-                AnchorSharingUI.SetActive(true);
+            {
+                SetAnchorBtn.SetActive(true);
+                ShareAnchorBtn.SetActive(true);
+            }
         }
         else
         {

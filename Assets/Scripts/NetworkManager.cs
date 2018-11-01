@@ -104,6 +104,7 @@ using UnityEngine;
         public override void OnDisconnectedFromPhoton()
         {
             ConnectionIndicator.GetComponent<Renderer>().material.color = new Color(1, 0, 0);
+            controlPanel.SetActive(true);
         }
 
 
