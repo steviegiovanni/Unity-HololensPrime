@@ -81,14 +81,15 @@ namespace ModelViewer
             set { _active = value; }
         }
 
-        /// <summary>
-        /// a task event is an event sequence played after user completes the task (rotate, translate a part after user clicks)
-        /// </summary>
-        private TaskEvent _taskEvent;
-        public TaskEvent TaskEvent
+        private List<TaskEvent> _taskEvents;
+        public List<TaskEvent> TaskEvents
         {
-            get { return _taskEvent; }
-            set { _taskEvent = value; }
+            get
+            {
+                if (_taskEvents == null)
+                    _taskEvents = new List<TaskEvent>();
+                return _taskEvents;
+            }
         }
 
         /// <summary>
@@ -99,6 +100,16 @@ namespace ModelViewer
         {
             get { return _enabled; }
             set { _enabled = value; }
+        }
+
+        /// <summary>
+        /// task event delay when the task is completed
+        /// </summary>
+        private float _taskDelay;
+        public float TaskDelay
+        {
+            get { return _taskDelay; }
+            set { _taskDelay = value; }
         }
 
         /// <summary>
@@ -118,7 +129,7 @@ namespace ModelViewer
         /// what kind of hint should be drawn? override for different task behaviour
         /// </summary>
         public virtual void DrawTaskHint()
-        {}
+        { }
 
         /// <summary>
         /// update task hint in case user is moving the cage around
@@ -130,13 +141,14 @@ namespace ModelViewer
         /// draw hint gizmos on editor mode
         /// </summary>
         public virtual void DrawEditorTaskHint()
-        {}
+        { }
 
         /// <summary>
         /// base constructor taking a game object
         /// </summary>
         public Task(TaskList tl, GameObject go)
         {
+            TaskDelay = 0;
             TaskList = tl;
             TaskName = "New Task";
             GameObject = go;
@@ -148,26 +160,33 @@ namespace ModelViewer
         /// </summary>
         public Task(TaskList tl, SerializableTask task)
         {
+            TaskDelay = task.TaskDelay;
             TaskList = tl;
             GameObject = task.GameObject;
             TaskName = task.TaskName;
             Description = task.Description;
             GOName = task.GOName;
 
-            SerializableTaskEvent ste = task.TaskEvent;
-            if (ste != null)
+            foreach (var taskEvent in task.TaskEvents)
             {
-                switch (ste.TypeName)
+                switch (taskEvent.TypeName)
                 {
                     case "TransformTaskEvent":
                         {
-                            TaskEvent = new TransformTaskEvent(ste);
+                            TaskEvent newTaskEvent = new TransformTaskEvent(taskEvent);
+                            newTaskEvent.Task = this;
+                            this.TaskEvents.Add(newTaskEvent);
+                        }
+                        break;
+                    case "AnimationTaskEvent":
+                        {
+
+                            TaskEvent newTaskEvent = new AnimationTaskEvent(taskEvent);
+                            newTaskEvent.Task = this;
+                            this.TaskEvents.Add(newTaskEvent);
                         }
                         break;
                 }
-
-                if(TaskEvent != null)
-                    TaskEvent.Task = this;
             }
         }
     }

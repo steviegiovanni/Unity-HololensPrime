@@ -15,6 +15,7 @@ namespace ModelViewer
         // base data
         public string TypeName;
         public GameObject GameObject;
+        public float TaskDelay;
 
         // move task data
         public Vector3 Position;
@@ -26,20 +27,24 @@ namespace ModelViewer
         public string GOName;
 
         // task event data
-        public SerializableTaskEvent TaskEvent;
-        
+        public List<SerializableTaskEvent> TaskEvents;
+
         /// <summary>
         /// constructor that takes a task and serialize it into its internal data structure
         /// </summary>
         public SerializableTask(Task t)
         {
+            TaskDelay = t.TaskDelay;
             GOName = t.GOName;
             TypeName = t.GetType().Name;
             GameObject = t.GameObject;
             TaskName = t.TaskName;
             Description = t.Description;
-            if(t.TaskEvent != null)
-                TaskEvent = new SerializableTaskEvent(t.TaskEvent);
+            TaskEvents = new List<SerializableTaskEvent>();
+            foreach (var taskEvent in t.TaskEvents)
+            {
+                TaskEvents.Add(new SerializableTaskEvent(taskEvent));
+            }
             switch (TypeName)
             {
                 case "MovingTask":
@@ -49,7 +54,8 @@ namespace ModelViewer
                         Rotation = castedTask.Rotation;
                         SnapThreshold = castedTask.SnapThreshold;
                         MoveType = castedTask.MoveType;
-                    }break;
+                    }
+                    break;
             }
         }
     }

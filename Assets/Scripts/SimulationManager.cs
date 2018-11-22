@@ -8,6 +8,7 @@ public class SimulationManager : Photon.PunBehaviour {
     public GameObject ControlPanel;
     public GameObject OpenAnchorSharingBtn;
     public GameObject CloseAnchorSharingBtn;
+    public GameObject FollowHeadMPOUIPanel;
 	
 	// Update is called once per frame
 	void Update () {
@@ -31,6 +32,7 @@ public class SimulationManager : Photon.PunBehaviour {
         BodyLockedAnchorSharingPanel.SetActive(false);
         CloseAnchorSharingBtn.SetActive(true);
         OpenAnchorSharingBtn.SetActive(false);
+        FollowHeadMPOUIPanel.SetActive(false);
     }
 
     public void OpenAnchorSharingPanel()
@@ -54,6 +56,7 @@ public class SimulationManager : Photon.PunBehaviour {
         BodyLockedAnchorSharingPanel.SetActive(true);
         CloseAnchorSharingBtn.SetActive(true);
         OpenAnchorSharingBtn.SetActive(false);
+        FollowHeadMPOUIPanel.SetActive(true);
     }
 
     public override void OnDisconnectedFromPhoton()
@@ -61,5 +64,6 @@ public class SimulationManager : Photon.PunBehaviour {
         HUDWelcomePanel.SetActive(true);
         ControlPanel.SetActive(false);
         BodyLockedAnchorSharingPanel.SetActive(false);
+        FollowHeadMPOUIPanel.SetActive(false);
     }
 }

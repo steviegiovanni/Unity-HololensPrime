@@ -24,13 +24,14 @@ namespace ModelViewer
         /// </summary>
         public override void DrawTaskHint()
         {
-            TaskList.Hint = GameObject.Instantiate(TaskList.HintPrefab, GameObject.transform.position, GameObject.transform.rotation);
-            TaskList.Hint.GetComponent<MeshFilter>().sharedMesh = GameObject.GetComponent<MeshFilter>().sharedMesh;
+
+            TaskList.Hint = new GameObject();
+            TaskList.Hint.transform.SetPositionAndRotation(GameObject.transform.position, GameObject.transform.rotation);
             TaskList.Hint.transform.localScale = GameObject.transform.lossyScale;
-            if (TaskList.Hint.GetComponent<Collider>() != null)
-                GameObject.Destroy(TaskList.Hint.GetComponent<Collider>());
-            if (TaskList.Hint.GetComponent<Renderer>() != null)
-                TaskList.Hint.GetComponent<Renderer>().material = TaskList.SilhouetteMaterial;
+            TaskList.Hint.AddComponent<MeshFilter>();
+            TaskList.Hint.GetComponent<MeshFilter>().sharedMesh = GameObject.GetComponent<MeshFilter>().sharedMesh;
+            TaskList.Hint.AddComponent<MeshRenderer>();
+            TaskList.Hint.GetComponent<Renderer>().material = TaskList.SilhouetteMaterial;
         }
 
         /// <summary>

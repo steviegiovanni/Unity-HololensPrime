@@ -62,11 +62,13 @@ namespace ModelViewer
         /// <summary>
         /// constructor that deserialize a serializable task event
         /// </summary>
-        public TransformTaskEvent(SerializableTaskEvent ste) : base(ste) {
+        public TransformTaskEvent(SerializableTaskEvent ste) : base(ste)
+        {
             StartPos = ste.StartPos;
             EndPos = ste.EndPos;
             StartRotation = ste.StartRotation;
             EndRotation = ste.EndRotation;
+            Duration = ste.Duration;
         }
 
         /// <summary>
@@ -84,7 +86,7 @@ namespace ModelViewer
             List<Quaternion> childStartRotations = new List<Quaternion>();
 
             GameObject taskObj = Task.GameObject;
-            foreach(Transform child in taskObj.transform)
+            foreach (Transform child in taskObj.transform)
             {
                 childStartPositions.Add(child.position);
                 childStartRotations.Add(child.rotation);
@@ -93,14 +95,13 @@ namespace ModelViewer
             // interpolate slowly from start to end position and rotation, remember to reset all child transform to their original transforms
             float startTime = Time.time;
             float curTime = startTime;
-            while(curTime - startTime < Duration)
+            while (curTime - startTime < Duration)
             {
                 curTime += Time.deltaTime;
-
-                taskObj.transform.SetPositionAndRotation(taskObj.transform.position + (Task.TaskList.MPO.transform.TransformPoint(EndPos) - Task.TaskList.MPO.transform.TransformPoint(StartPos)) * Time.deltaTime / Duration, Quaternion.Lerp(Task.TaskList.MPO.transform.rotation * StartRotation, Task.TaskList.MPO.transform.rotation *EndRotation, (curTime - startTime) / Duration));
+                taskObj.transform.SetPositionAndRotation(taskObj.transform.position + (Task.TaskList.MPO.transform.TransformPoint(EndPos) - Task.TaskList.MPO.transform.TransformPoint(StartPos)) * Time.deltaTime / Duration, Quaternion.Lerp(Task.TaskList.MPO.transform.rotation * StartRotation, Task.TaskList.MPO.transform.rotation * EndRotation, (curTime - startTime) / Duration));
 
                 for (int i = 0; i < taskObj.transform.childCount; i++)
-                    taskObj.transform.GetChild(i).SetPositionAndRotation(childStartPositions[i],childStartRotations[i]);
+                    taskObj.transform.GetChild(i).SetPositionAndRotation(childStartPositions[i], childStartRotations[i]);
 
                 yield return null;
             }

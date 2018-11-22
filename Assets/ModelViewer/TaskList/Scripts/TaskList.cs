@@ -14,8 +14,10 @@ namespace ModelViewer
     {
         [SerializeField]
         private GameObject _hintPrefab;
-        public GameObject HintPrefab {
-            get {
+        public GameObject HintPrefab
+        {
+            get
+            {
                 return _hintPrefab;
             }
         }
@@ -27,8 +29,9 @@ namespace ModelViewer
         private MultiPartsObject _mpo;
         public MultiPartsObject MPO
         {
-            get {
-                if(_mpo == null)
+            get
+            {
+                if (_mpo == null)
                 {
                     _mpo = GameObject.FindObjectOfType<MultiPartsObject>();
                     if (_mpo == null)
@@ -54,7 +57,8 @@ namespace ModelViewer
         private List<Task> _tasks;
         public List<Task> Tasks
         {
-            get {
+            get
+            {
                 if (_tasks == null)
                     _tasks = new List<Task>();
                 return _tasks;
@@ -95,7 +99,8 @@ namespace ModelViewer
         private TaskStartEvent _taskStartListeners;
         public TaskStartEvent TaskStartListeners
         {
-            get {
+            get
+            {
                 if (_taskStartListeners == null)
                     _taskStartListeners = new TaskStartEvent();
                 return _taskStartListeners;
@@ -145,7 +150,7 @@ namespace ModelViewer
             cageRot = MPO.transform.rotation;
             _goInitialPos = new List<Vector3>();
             _goInitialRot = new List<Quaternion>();
-            foreach(var task in Tasks)
+            foreach (var task in Tasks)
             {
                 _goInitialPos.Add(task.GameObject.transform.position);
                 _goInitialRot.Add(task.GameObject.transform.rotation);
@@ -220,15 +225,15 @@ namespace ModelViewer
             {
                 case "MovingTask":
                     {
-                        return new MovingTask(this,st);
+                        return new MovingTask(this, st);
                     }
                 case "ClickingTask":
                     {
-                        return new ClickingTask(this,st);
+                        return new ClickingTask(this, st);
                     }
                 default:
                     {
-                        return new Task(this,st);
+                        return new Task(this, st);
                     }
             }
         }
@@ -261,7 +266,7 @@ namespace ModelViewer
 
         public IEnumerator TaskListCoroutine()
         {
-            while(CurrentTaskId != Tasks.Count)
+            while (CurrentTaskId != Tasks.Count)
             {
 
                 if (CurrentTaskId == -1)
@@ -300,10 +305,17 @@ namespace ModelViewer
                     Destroy(Hint);
 
                 // run task event coroutine if exists
-                if (task.TaskEvent != null)
-                    yield return StartCoroutine(task.TaskEvent.TaskEventCoroutine());
+                /*if (task.TaskEvent != null)
+                {
+                    //yield return StartCoroutine(task.TaskEvent.TaskEventCoroutine());
+                    StartCoroutine(task.TaskEvent.TaskEventCoroutine());
+                }*/
+                foreach (var taskEvent in task.TaskEvents)
+                    StartCoroutine(taskEvent.TaskEventCoroutine());
 
-                yield return null;
+                yield return new WaitForSeconds(task.TaskDelay);
+
+                //yield return null;
             }
 
             TaskStartListeners.Invoke(null);
@@ -365,7 +377,7 @@ namespace ModelViewer
         void ChangeLockOfTaskNode(Task task, bool value)
         {
             Node node = null;
-            if(MPO.Dict.TryGetValue(task.GameObject,out node))
+            if (MPO.Dict.TryGetValue(task.GameObject, out node))
                 node.Locked = value;
         }
 
@@ -388,7 +400,7 @@ namespace ModelViewer
         /// </summary>
         public void CheckTaskOnRelease(Node node)
         {
-            if(CurrentTaskId < Tasks.Count && CurrentTaskId != -1)
+            if (CurrentTaskId < Tasks.Count && CurrentTaskId != -1)
             {
                 Task task = Tasks[CurrentTaskId];
                 if (!task.Enabled) return;
